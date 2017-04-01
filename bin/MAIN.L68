@@ -1,0 +1,301 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.15.04
+Created On: 2017-03-31 11:05:24 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :
+00000000                             3  * Written by : Hall7790
+00000000                             4  * Date       :
+00000000                             5  * Description: 
+00000000                             6  *-----------------------------------------------------------
+00000064                             7      ORG     $064
+00000064= 000011A6                   8      DC.L    KEYBOARD
+00000068                             9      
+00001000                            10      ORG    $1000
+00001000                            11  START:                  ; first instruction of program
+00001000  4EB9 00001186             12      JSR ENABLEKEYBOARD
+00001006  4EB9 00001128             13      JSR SETSCREEN
+0000100C  43F9 00001278             14      LEA HEAD,A1
+00001012  45F9 0000127A             15      LEA DIR,A2
+00001018  47F9 00001276             16      LEA FOOD,A3
+0000101E  4EB9 00001248             17      JSR PLACEFOOD
+00001024                            18      
+00001024                            19  LOOP
+00001024  4EB9 0000116E             20      JSR     DELAY
+0000102A  4EB9 00001116             21      JSR     CLEARSCREEN
+00001030                            22      
+00001030  4EB9 0000121C             23      JSR     CHANGE_RED
+00001036  1F1B                      24      MOVE.B  (A3)+,-(SP)
+00001038  1F13                      25      MOVE.B  (A3),-(SP)
+0000103A  4EB9 00001142             26      JSR     DRAWS
+00001040                            27      
+00001040  4EB9 00001232             28      JSR     CHANGE_WHITE
+00001046  1F19                      29      MOVE.B  (A1)+,-(SP)
+00001048  1F11                      30      MOVE.B  (A1),-(SP)
+0000104A  4EB9 00001142             31      JSR     DRAWS
+00001050                            32      
+00001050  5349                      33      SUBA    #1,A1
+00001052  534B                      34      SUBA    #1,A3
+00001054                            35      
+00001054  1219                      36      MOVE.B  (A1)+,D1
+00001056  B27C 0020                 37      CMP     #32,D1
+0000105A  6E00 0090                 38      BGT     DEAD
+0000105E  B27C 0000                 39      CMP     #0,D1
+00001062  6D00 0088                 40      BLT     DEAD
+00001066                            41      
+00001066  1211                      42      MOVE.B  (A1),D1
+00001068  B27C 0020                 43      CMP     #32,D1
+0000106C  6E00 007E                 44      BGT     DEAD
+00001070  B27C 0000                 45      CMP     #0,D1
+00001074  6D00 0076                 46      BLT     DEAD
+00001078                            47      
+00001078  5349                      48      SUBA    #1,A1
+0000107A                            49      
+0000107A  1019                      50      MOVE.B  (A1)+,D0
+0000107C  121B                      51      MOVE.B  (A3)+,D1
+0000107E  E148                      52      LSL     #8,D0
+00001080  E149                      53      LSL     #8,D1
+00001082  1011                      54      MOVE.B  (A1),D0
+00001084  1213                      55      MOVE.B  (A3),D1
+00001086  B240                      56      CMP     D0,D1
+00001088  6700 0030                 57      BEQ     EATEN 
+0000108C  4281                      58      CLR.L   D1
+0000108E  4280                      59      CLR.L   D0
+00001090  5349                      60      SUBA    #1,A1
+00001092  534B                      61      SUBA    #1,A3
+00001094                            62   
+00001094  1212                      63      MOVE.B  (A2),D1
+00001096                            64      
+00001096  B27C 0001                 65      CMP     #1,D1
+0000109A  6700 0030                 66      BEQ     GOL
+0000109E  B27C 0002                 67      CMP     #2,D1
+000010A2  6700 002E                 68      BEQ     GOU
+000010A6  B27C 0003                 69      CMP     #3,D1
+000010AA  6700 0030                 70      BEQ     GOR
+000010AE  B27C 0004                 71      CMP     #4,D1
+000010B2  6700 002E                 72      BEQ     GOD
+000010B6                            73      
+000010B6                            74      
+000010B6                            75      
+000010B6  6000 FF6C                 76      BRA     LOOP
+000010BA                            77      
+000010BA                            78  EATEN
+000010BA  5349                      79      SUBA    #1,A1
+000010BC  534B                      80      SUBA    #1,A3
+000010BE  4EB9 00001248             81      JSR PLACEFOOD
+000010C4  4281                      82      CLR.L   D1
+000010C6  4280                      83      CLR.L   D0
+000010C8  6000 FF5A                 84      BRA LOOP
+000010CC                            85     
+000010CC                            86      
+000010CC                            87  GOL
+000010CC  5311                      88      SUB.B   #1,(A1)    
+000010CE  6000 FF54                 89      BRA     LOOP
+000010D2                            90  GOU
+000010D2  5249                      91      ADDA    #1,A1
+000010D4  5311                      92      SUB.B   #1,(A1)
+000010D6  5349                      93      SUBA    #1,A1
+000010D8  6000 FF4A                 94      BRA     LOOP
+000010DC                            95  GOR
+000010DC  5211                      96      ADD.B   #1,(A1)    
+000010DE  6000 FF44                 97      BRA     LOOP  
+000010E2                            98  GOD
+000010E2  5249                      99      ADDA    #1,A1
+000010E4  5211                     100      ADD.B   #1,(A1)
+000010E6  5349                     101      SUBA    #1,A1
+000010E8  6000 FF3A                102      BRA     LOOP 
+000010EC                           103  
+000010EC                           104  DEAD
+000010EC  143C 0003                105      MOVE.B  #3,D2
+000010F0  4EB9 0000121C            106      JSR     CHANGE_RED
+000010F6                           107  DEADLOOP
+000010F6  4EB9 000011FC            108      JSR     SCREENFLASH
+000010FC  4EB9 0000116E            109      JSR     DELAY
+00001102  4EB9 00001116            110      JSR     CLEARSCREEN
+00001108  4EB9 0000116E            111      JSR     DELAY
+0000110E  56CA FFE6                112      DBNE    D2,DEADLOOP
+00001112  FFFF FFFF                113      SIMHALT             ; halt simulator
+00001116                           114   
+00001116                           115  
+00001116                           116  * Put program code here
+00001116                           117      
+00001116                           118      
+00001116                           119      INCLUDE 'subs.X68'
+00001116                           120  CLEARSCREEN
+00001116  48A7 C000                121      MOVEM   D0-D1,-(SP)
+0000111A  103C 000B                122      MOVE.B  #11,D0
+0000111E  323C FF00                123      MOVE.W  #$FF00,D1
+00001122  4E4F                     124      TRAP    #15
+00001124  4C9F 0003                125      MOVEM   (SP)+,D0-D1 
+00001128                           126  
+00001128                           127  SETSCREEN
+00001128  48A7 C000                128      MOVEM   D0-D1,-(SP)
+0000112C  303C 0021                129      MOVE.W  #33,D0
+00001130  323C 0280                130      MOVE.W  #640,D1
+00001134  4841                     131      SWAP    D1
+00001136  323C 0280                132      MOVE.W  #640,D1
+0000113A  4E4F                     133      TRAP    #15
+0000113C  4C9F 0003                134      MOVEM   (SP)+,D0-D1
+00001140  4E75                     135      RTS
+00001142                           136    
+00001142                           137  DRAWS
+00001142  48A7 F800                138      MOVEM   D0-D4,-(SP)
+00001146  303C 0057                139      MOVE.W  #87,D0
+0000114A  122F 0010                140      MOVE.B  16(SP),D1
+0000114E  142F 000E                141      MOVE.B  14(SP),D2
+00001152  C2FC 0014                142      MULU    #20,D1
+00001156  C4FC 0014                143      MULU    #20,D2
+0000115A  3601                     144      MOVE.W  D1,D3
+0000115C  3802                     145      MOVE.W  D2,D4
+0000115E  0643 0014                146      ADD.W   #20,D3
+00001162  0644 0014                147      ADD.W   #20,D4
+00001166  4E4F                     148      TRAP    #15
+00001168  4C9F 001F                149      MOVEM   (SP)+,D0-D4
+0000116C  4E75                     150      RTS
+0000116E                           151      
+0000116E                           152  DELAY
+0000116E  48E7 8000                153      MOVEM.L   D0,-(SP)
+00001172  4240                     154      CLR     D0
+00001174  203C 0003FFFF            155      MOVE.L  #$3FFFF,D0
+0000117A                           156  DLOOP
+0000117A  4E71                     157      NOP
+0000117C  5380                     158      SUB.L   #1,D0
+0000117E  66FA                     159      BNE     DLOOP
+00001180  4CDF 0001                160      MOVEM.L   (SP)+,D0
+00001184  4E75                     161      RTS
+00001186                           162      
+00001186                           163  ENABLEKEYBOARD
+00001186  48A7 C000                164      MOVEM   D0-D1,-(SP)
+0000118A  303C 003E                165      MOVE.W  #62,D0
+0000118E  323C 0101                166      MOVE.W  #$0101,D1
+00001192  4E4F                     167      TRAP    #15
+00001194  4241                     168      CLR     D1
+00001196  303C 0020                169      MOVE.W  #32,D0
+0000119A  323C 0005                170      MOVE.W  #5,D1
+0000119E  4E4F                     171      TRAP    #15
+000011A0  4C9F 0003                172      MOVEM   (SP)+,D0-D1
+000011A4  4E75                     173      RTS
+000011A6                           174      
+000011A6                           175  KEYBOARD
+000011A6  48E7 C000                176      MOVEM.L   D0-D1,-(SP)
+000011AA  103C 0013                177      MOVE.B  #19,D0
+000011AE  7200                     178      MOVE.L  #0,D1
+000011B0  4E4F                     179      TRAP    #15
+000011B2  B27C 0025                180      CMP     #$25,D1
+000011B6  6F00 001E                181      BLE     LCHANGE
+000011BA  B27C 0026                182      CMP     #$26,D1
+000011BE  6F00 0026                183      BLE     UCHANGE
+000011C2  B27C 0027                184      CMP     #$27,D1
+000011C6  6F00 0016                185      BLE     RCHANGE
+000011CA  B27C 0028                186      CMP     #$28,D1
+000011CE  6F00 001E                187      BLE     DCHANGE
+000011D2  6000 0022                188      BRA     INTRTN 
+000011D6                           189  LCHANGE
+000011D6  14BC 0001                190      MOVE.B  #1,(A2)
+000011DA  6000 001A                191      BRA     INTRTN 
+000011DE                           192  RCHANGE
+000011DE  14BC 0003                193      MOVE.B  #3,(A2)
+000011E2  6000 0012                194      BRA     INTRTN 
+000011E6                           195  UCHANGE
+000011E6  14BC 0002                196      MOVE.B  #2,(A2)
+000011EA  6000 000A                197      BRA     INTRTN
+000011EE                           198  DCHANGE 
+000011EE  14BC 0004                199      MOVE.B  #4,(A2)
+000011F2  6000 0002                200      BRA     INTRTN
+000011F6                           201  INTRTN
+000011F6  4CDF 0003                202      MOVEM.L   (SP)+,D0-D1
+000011FA  4E73                     203      RTE
+000011FC                           204  
+000011FC                           205  SCREENFLASH
+000011FC  48A7 F800                206      MOVEM   D0-D4,-(SP)
+00001200  303C 0057                207      MOVE.W  #87,D0
+00001204  123C 0000                208      MOVE.B  #0,D1
+00001208  143C 0000                209      MOVE.B  #0,D2
+0000120C  363C 0280                210      MOVE.W  #640,D3
+00001210  383C 0280                211      MOVE.W  #640,D4
+00001214  4E4F                     212      TRAP    #15
+00001216  4C9F 001F                213      MOVEM   (SP)+,D0-D4
+0000121A  4E75                     214      RTS
+0000121C                           215      
+0000121C                           216  CHANGE_RED
+0000121C  48A7 C000                217      MOVEM   D0-D1,-(SP)
+00001220  303C 0051                218      MOVE.W  #81,D0
+00001224  223C 000000CC            219      MOVE.L  #$000000CC,D1
+0000122A  4E4F                     220      TRAP    #15
+0000122C  4C9F 0003                221      MOVEM   (SP)+,D0-D1
+00001230  4E75                     222      RTS
+00001232                           223      
+00001232                           224  CHANGE_WHITE
+00001232  48A7 C000                225      MOVEM   D0-D1,-(SP)
+00001236  303C 0051                226      MOVE.W  #81,D0
+0000123A  223C 00FFFFFF            227      MOVE.L  #$00FFFFFF,D1
+00001240  4E4F                     228      TRAP    #15
+00001242  4C9F 0003                229      MOVEM   (SP)+,D0-D1
+00001246  4E75                     230      RTS
+00001248                           231      
+00001248                           232  PLACEFOOD
+00001248  4EB9 0000125C            233      JSR     RANNUM
+0000124E  16C2                     234      MOVE.B  D2,(A3)+
+00001250  4EB9 0000125C            235      JSR     RANNUM
+00001256  1682                     236      MOVE.B  D2,(A3)
+00001258  534B                     237      SUBA    #1,A3
+0000125A  4E75                     238      RTS
+0000125C                           239      
+0000125C                           240  RANNUM
+0000125C  48A7 C000                241      MOVEM   D0-D1,-(SP)
+00001260  303C 0008                242      MOVE.W  #8,D0
+00001264  4E4F                     243      TRAP    #15
+00001266  1401                     244      MOVE.B  D1,D2
+00001268  2202                     245      MOVE.L  D2,D1
+0000126A  82FC 0008                246      DIVU    #$8,D1
+0000126E  3401                     247      MOVE.W  D1,D2
+00001270  4C9F 0003                248      MOVEM   (SP)+,D0-D1
+00001274  4E75                     249      RTS
+00001276                           250      
+00001276                           251  
+00001276                           252  
+00001276                           253  
+00001276                           254  -------------------- end include --------------------
+00001276                           255  
+00001276= 00 00                    256  FOOD    DC.B    0,0    
+00001278= 00 00                    257  HEAD    DC.B    0,0
+0000127A= 03                       258  DIR     DC.B    3
+0000127B                           259  
+0000127B                           260      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+CHANGE_RED          121C
+CHANGE_WHITE        1232
+CLEARSCREEN         1116
+DCHANGE             11EE
+DEAD                10EC
+DEADLOOP            10F6
+DELAY               116E
+DIR                 127A
+DLOOP               117A
+DRAWS               1142
+EATEN               10BA
+ENABLEKEYBOARD      1186
+FOOD                1276
+GOD                 10E2
+GOL                 10CC
+GOR                 10DC
+GOU                 10D2
+HEAD                1278
+INTRTN              11F6
+KEYBOARD            11A6
+LCHANGE             11D6
+LOOP                1024
+PLACEFOOD           1248
+RANNUM              125C
+RCHANGE             11DE
+SCREENFLASH         11FC
+SETSCREEN           1128
+START               1000
+UCHANGE             11E6
